@@ -16,6 +16,8 @@ import (
 	"github.com/johnfercher/maroto/v2/pkg/config"
 	"github.com/johnfercher/maroto/v2/pkg/core"
 	"github.com/johnfercher/maroto/v2/pkg/props"
+
+	"github.com/marceljaworski/invoice-pdf/data"
 )
 
 func main() {
@@ -25,7 +27,7 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	err = document.Save("docs/assets/pdfs/persons_info.pdf")
+	err = document.Save("docs/assets/pdf/invoice.pdf")
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -100,14 +102,14 @@ func getTransactions() []core.Row {
 	rows := []core.Row{
 		row.New(5).Add(
 			col.New(3),
-			text.NewCol(4, "Product", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
-			text.NewCol(2, "Quantity", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
+			text.NewCol(1, "Product", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
+			text.NewCol(2, "Description", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
 			text.NewCol(3, "Price", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
 		),
 	}
 
 	var contentsRow []core.Row
-	contents := getContents()
+	contents := data.FruitList(40)
 	/*for i := 0; i < 8; i++ {
 	    contents = append(contents, contents...)
 	}*/
@@ -115,9 +117,9 @@ func getTransactions() []core.Row {
 	for i, content := range contents {
 		r := row.New(4).Add(
 			col.New(3),
-			text.NewCol(4, content[1], props.Text{Size: 8, Align: align.Center}),
-			text.NewCol(2, content[2], props.Text{Size: 8, Align: align.Center}),
-			text.NewCol(3, content[3], props.Text{Size: 8, Align: align.Center}),
+			text.NewCol(1, content[0], props.Text{Size: 8, Align: align.Center}),
+			text.NewCol(2, content[1], props.Text{Size: 8, Align: align.Center}),
+			text.NewCol(3, content[2], props.Text{Size: 8, Align: align.Center}),
 		)
 		if i%2 == 0 {
 			gray := getGrayColor()
@@ -150,9 +152,9 @@ func getTransactions() []core.Row {
 
 func getPageHeader() core.Row {
 	return row.New(20).Add(
-		image.NewFromFileCol(3, "docs/assets/images/biplane.jpg", props.Rect{
+		image.NewFromFileCol(3, "docs/assets/images/logo_div_rhino.jpg", props.Rect{
 			Center:  true,
-			Percent: 80,
+			Percent: 100,
 		}),
 		col.New(6),
 		col.New(3).Add(
@@ -166,14 +168,14 @@ func getPageHeader() core.Row {
 				Style: fontstyle.BoldItalic,
 				Size:  8,
 				Align: align.Right,
-				Color: getBlueColor(),
+				Color: getDarkPurpleColor(),
 			}),
 			text.New("www.mycompany.com", props.Text{
 				Top:   15,
 				Style: fontstyle.BoldItalic,
 				Size:  8,
 				Align: align.Right,
-				Color: getBlueColor(),
+				Color: getDarkPurpleColor(),
 			}),
 		),
 	)
@@ -187,14 +189,14 @@ func getPageFooter() core.Row {
 				Style: fontstyle.BoldItalic,
 				Size:  8,
 				Align: align.Left,
-				Color: getBlueColor(),
+				Color: getDarkPurpleColor(),
 			}),
 			text.New("www.mycompany.com", props.Text{
 				Top:   16,
 				Style: fontstyle.BoldItalic,
 				Size:  8,
 				Align: align.Left,
-				Color: getBlueColor(),
+				Color: getDarkPurpleColor(),
 			}),
 		),
 	)
@@ -216,11 +218,11 @@ func getGrayColor() *props.Color {
 	}
 }
 
-func getBlueColor() *props.Color {
+func getDarkPurpleColor() *props.Color {
 	return &props.Color{
-		Red:   10,
-		Green: 10,
-		Blue:  150,
+		Red:   88,
+		Green: 80,
+		Blue:  99,
 	}
 }
 
@@ -229,37 +231,5 @@ func getRedColor() *props.Color {
 		Red:   150,
 		Green: 10,
 		Blue:  10,
-	}
-}
-
-func getContents() [][]string {
-	return [][]string{
-		{"", "Swamp", "12", "R$ 4,00"},
-		{"", "Sorin, A Planeswalker", "4", "R$ 90,00"},
-		{"", "Tassa", "4", "R$ 30,00"},
-		{"", "Skinrender", "4", "R$ 9,00"},
-		{"", "Island", "12", "R$ 4,00"},
-		{"", "Mountain", "12", "R$ 4,00"},
-		{"", "Plain", "12", "R$ 4,00"},
-		{"", "Black Lotus", "1", "R$ 1.000,00"},
-		{"", "Time Walk", "1", "R$ 1.000,00"},
-		{"", "Emberclave", "4", "R$ 44,00"},
-		{"", "Anax", "4", "R$ 32,00"},
-		{"", "Murderous Rider", "4", "R$ 22,00"},
-		{"", "Gray Merchant of Asphodel", "4", "R$ 2,00"},
-		{"", "Ajani's Pridemate", "4", "R$ 2,00"},
-		{"", "Renan, Chatuba", "4", "R$ 19,00"},
-		{"", "Tymarett", "4", "R$ 13,00"},
-		{"", "Doom Blade", "4", "R$ 5,00"},
-		{"", "Dark Lord", "3", "R$ 7,00"},
-		{"", "Memory of Thanatos", "3", "R$ 32,00"},
-		{"", "Poring", "4", "R$ 1,00"},
-		{"", "Deviling", "4", "R$ 99,00"},
-		{"", "Seiya", "4", "R$ 45,00"},
-		{"", "Harry Potter", "4", "R$ 62,00"},
-		{"", "Goku", "4", "R$ 77,00"},
-		{"", "Phreoni", "4", "R$ 22,00"},
-		{"", "Katheryn High Wizard", "4", "R$ 25,00"},
-		{"", "Lord Seyren", "4", "R$ 55,00"},
 	}
 }
