@@ -1,4 +1,4 @@
-module github.com/marceljaworski/personinfo-pdf
+module github.com/marceljaworski/invoice-pdf
 
 go 1.22.2
 
