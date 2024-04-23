@@ -4,14 +4,16 @@ import (
 	"log"
 
 	"github.com/johnfercher/maroto/v2"
+
 	"github.com/johnfercher/maroto/v2/pkg/components/code"
 	"github.com/johnfercher/maroto/v2/pkg/components/col"
 	"github.com/johnfercher/maroto/v2/pkg/components/image"
 	"github.com/johnfercher/maroto/v2/pkg/components/row"
 	"github.com/johnfercher/maroto/v2/pkg/components/text"
-	"github.com/johnfercher/maroto/v2/pkg/config"
 	"github.com/johnfercher/maroto/v2/pkg/consts/align"
 	"github.com/johnfercher/maroto/v2/pkg/consts/fontstyle"
+
+	"github.com/johnfercher/maroto/v2/pkg/config"
 	"github.com/johnfercher/maroto/v2/pkg/core"
 	"github.com/johnfercher/maroto/v2/pkg/props"
 )
@@ -20,14 +22,20 @@ func main() {
 	m := GetMaroto()
 	document, err := m.Generate()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(err.Error())
 	}
 
 	err = document.Save("docs/assets/pdfs/persons_info.pdf")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(err.Error())
 	}
+
+	// err = document.GetReport().Save("docs/assets/text/billingv2.txt")
+	// if err != nil {
+	// 	log.Fatal(err.Error())
+	// }
 }
+
 func GetMaroto() core.Maroto {
 	cfg := config.NewBuilder().
 		WithPageNumber("Page {current} of {total}", props.RightBottom).
@@ -64,7 +72,7 @@ func GetMaroto() core.Maroto {
 		}),
 	).WithStyle(&props.Cell{BackgroundColor: darkGrayColor})
 
-	// m.AddRows(getTransactions()...)
+	m.AddRows(getTransactions()...)
 
 	m.AddRow(15,
 		col.New(6).Add(
@@ -86,6 +94,58 @@ func GetMaroto() core.Maroto {
 		col.New(6),
 	)
 	return m
+}
+
+func getTransactions() []core.Row {
+	rows := []core.Row{
+		row.New(5).Add(
+			col.New(3),
+			text.NewCol(4, "Product", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
+			text.NewCol(2, "Quantity", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
+			text.NewCol(3, "Price", props.Text{Size: 9, Align: align.Center, Style: fontstyle.Bold}),
+		),
+	}
+
+	var contentsRow []core.Row
+	contents := getContents()
+	/*for i := 0; i < 8; i++ {
+	    contents = append(contents, contents...)
+	}*/
+
+	for i, content := range contents {
+		r := row.New(4).Add(
+			col.New(3),
+			text.NewCol(4, content[1], props.Text{Size: 8, Align: align.Center}),
+			text.NewCol(2, content[2], props.Text{Size: 8, Align: align.Center}),
+			text.NewCol(3, content[3], props.Text{Size: 8, Align: align.Center}),
+		)
+		if i%2 == 0 {
+			gray := getGrayColor()
+			r.WithStyle(&props.Cell{BackgroundColor: gray})
+		}
+
+		contentsRow = append(contentsRow, r)
+	}
+
+	rows = append(rows, contentsRow...)
+
+	rows = append(rows, row.New(20).Add(
+		col.New(7),
+		text.NewCol(2, "Total:", props.Text{
+			Top:   5,
+			Style: fontstyle.Bold,
+			Size:  8,
+			Align: align.Right,
+		}),
+		text.NewCol(3, "R$ 2.567,00", props.Text{
+			Top:   5,
+			Style: fontstyle.Bold,
+			Size:  8,
+			Align: align.Center,
+		}),
+	))
+
+	return rows
 }
 
 func getPageHeader() core.Row {
@@ -169,5 +229,37 @@ func getRedColor() *props.Color {
 		Red:   150,
 		Green: 10,
 		Blue:  10,
+	}
+}
+
+func getContents() [][]string {
+	return [][]string{
+		{"", "Swamp", "12", "R$ 4,00"},
+		{"", "Sorin, A Planeswalker", "4", "R$ 90,00"},
+		{"", "Tassa", "4", "R$ 30,00"},
+		{"", "Skinrender", "4", "R$ 9,00"},
+		{"", "Island", "12", "R$ 4,00"},
+		{"", "Mountain", "12", "R$ 4,00"},
+		{"", "Plain", "12", "R$ 4,00"},
+		{"", "Black Lotus", "1", "R$ 1.000,00"},
+		{"", "Time Walk", "1", "R$ 1.000,00"},
+		{"", "Emberclave", "4", "R$ 44,00"},
+		{"", "Anax", "4", "R$ 32,00"},
+		{"", "Murderous Rider", "4", "R$ 22,00"},
+		{"", "Gray Merchant of Asphodel", "4", "R$ 2,00"},
+		{"", "Ajani's Pridemate", "4", "R$ 2,00"},
+		{"", "Renan, Chatuba", "4", "R$ 19,00"},
+		{"", "Tymarett", "4", "R$ 13,00"},
+		{"", "Doom Blade", "4", "R$ 5,00"},
+		{"", "Dark Lord", "3", "R$ 7,00"},
+		{"", "Memory of Thanatos", "3", "R$ 32,00"},
+		{"", "Poring", "4", "R$ 1,00"},
+		{"", "Deviling", "4", "R$ 99,00"},
+		{"", "Seiya", "4", "R$ 45,00"},
+		{"", "Harry Potter", "4", "R$ 62,00"},
+		{"", "Goku", "4", "R$ 77,00"},
+		{"", "Phreoni", "4", "R$ 22,00"},
+		{"", "Katheryn High Wizard", "4", "R$ 25,00"},
+		{"", "Lord Seyren", "4", "R$ 55,00"},
 	}
 }
