@@ -1,4 +1,4 @@
-# PDF table creation tool for people data
+# PDF Document generator tool 
 
 ## Features
 ### Maroto Document Processor
